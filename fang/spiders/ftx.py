@@ -133,6 +133,7 @@ class FtxSpider(scrapy.Spider):
 
             except Exception as e:
                 print(e)
+
         # 下一页链接
         next_url = response.xpath('//div[@class="page_al"]/p[a="下一页"]/a/@href').get()
         # 将下一页请求交给引擎
