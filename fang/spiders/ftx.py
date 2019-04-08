@@ -51,7 +51,6 @@ class FtxSpider(scrapy.Spider):
         # 获取省份城市信息
         province, city = response.meta.get('info')
         lis = response.xpath('//div[@class="nhouse_list"]/div/ul/li[not(@class)]')
-        item = None
         for li in lis:
             try:
                 # 小区名称
@@ -79,15 +78,16 @@ class FtxSpider(scrapy.Spider):
 
                 item = NewHouseItem(province=province, city=city, name=name, price=price, rooms=rooms, area=area,
                                     address=address, district=district, sale=sale, origin_url=origin_url)
+                yield item
+
             except Exception as e:
                 print(e)
-            yield item
 
-            # 获取下一页链接
-            next_url = response.xpath('//div[@class="page"]//a[@class="next"]/@href')
-            # 请求下一页
-            yield scrapy.Request(url=response.urljoin(next_url), callback=self.parser_newhouse,
-                                 meta={'info': (province, city)})
+        # 获取下一页链接
+        next_url = response.xpath('//a[@class="next"]/@href')
+        # 请求下一页
+        yield scrapy.Request(url=response.urljoin(next_url), callback=self.parser_newhouse,
+                             meta={'info': (province, city)})
 
     # 城市二手房数据
     def parser_esf(self, response):
@@ -133,8 +133,8 @@ class FtxSpider(scrapy.Spider):
 
             except Exception as e:
                 print(e)
-            # 下一页链接
-            next_url = response.xpath('//div[@class="page_al"]/p[a="下一页"]/a/@href').get()
-            # 将下一页请求交给引擎
-            yield scrapy.Request(url=response.urljoin(next_url), callback=self.parser_esf,
-                                 meta={'info': (province, city, esf_url)})
+        # 下一页链接
+        next_url = response.xpath('//div[@class="page_al"]/p[a="下一页"]/a/@href').get()
+        # 将下一页请求交给引擎
+        yield scrapy.Request(url=response.urljoin(next_url), callback=self.parser_esf,
+                             meta={'info': (province, city, esf_url)})
