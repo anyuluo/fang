@@ -75,6 +75,8 @@ class FtxSpider(scrapy.Spider):
                 sale = li.xpath('.//span[@class="inSale" or @class="forSale"]/text()').get()
                 # 详情页面url
                 origin_url = li.xpath('.//div[@class="nlcd_name"]/a/@href').get()
+                # 将详情页面url补充完整
+                origin_url = response.urljoin(origin_url)
 
                 item = NewHouseItem(province=province, city=city, name=name, price=price, rooms=rooms, area=area,
                                     address=address, district=district, sale=sale, origin_url=origin_url)
@@ -82,12 +84,14 @@ class FtxSpider(scrapy.Spider):
 
             except Exception as e:
                 print(e)
-
-        # 获取下一页链接
-        next_url = response.xpath('//a[@class="next"]/@href')
-        # 请求下一页
-        yield scrapy.Request(url=response.urljoin(next_url), callback=self.parser_newhouse,
-                             meta={'info': (province, city)})
+        try:
+            # 获取下一页链接
+            next_url = response.xpath('//a[@class="next"]/@href')
+            # 请求下一页
+            yield scrapy.Request(url=response.urljoin(next_url), callback=self.parser_newhouse,
+                                 meta={'info': (province, city)})
+        except Exception as e:
+            print(e)
 
     # 城市二手房数据
     def parser_esf(self, response):
@@ -133,9 +137,11 @@ class FtxSpider(scrapy.Spider):
 
             except Exception as e:
                 print(e)
-
-        # 下一页链接
-        next_url = response.xpath('//div[@class="page_al"]/p[a="下一页"]/a/@href').get()
-        # 将下一页请求交给引擎
-        yield scrapy.Request(url=response.urljoin(next_url), callback=self.parser_esf,
-                             meta={'info': (province, city, esf_url)})
+        try:
+            # 下一页链接
+            next_url = response.xpath('//div[@class="page_al"]/p[a="下一页"]/a/@href').get()
+            # 将下一页请求交给引擎
+            yield scrapy.Request(url=response.urljoin(next_url), callback=self.parser_esf,
+                                 meta={'info': (province, city, esf_url)})
+        except Exception as e:
+            print(e)
