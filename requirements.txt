@@ -57,7 +57,7 @@ sklearn==0.0
 splinter==0.10.0
 SQLAlchemy==1.2.14
 Twisted==18.9.0
-urllib3==1.22
+urllib3==1.26.5
 w3lib==1.20.0
 wrapcache==1.0.8
 xlrd==1.2.0
