@@ -41,7 +41,7 @@ PyQRCode==1.2.1
 pytesseract==0.2.6
 python-dateutil==2.8.0
 pytz==2018.9
-pywin32==224
+pywin32==301
 PyYAML==3.12
 queuelib==1.5.0
 requests==2.18.4
